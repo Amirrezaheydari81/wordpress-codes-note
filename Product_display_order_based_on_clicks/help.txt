@@ -1,25 +1,18 @@
-این کوئری ها برای زمانی هست که میخواید مقدار های کلیک محصول رو از دیتابیس به صورت دستی آپدیت کنید
----------------------------------------
 کوئری افزایش مقدار کلیک یک محصول
-SET @product_title = 'فرش 1200 شانه باغ بهشت نقره ای طرح دردانه';
-SET @increment_value = 5;
+SET @product_title = 'فرش طرح انیتا سیلور 1200 شانه';
+SET @increment_value = 10;
 
-UPDATE wp_postmeta
-SET meta_value = meta_value + @increment_value
-WHERE post_id = (
-    SELECT ID
-    FROM wp_posts
-    WHERE post_title = @product_title AND post_type = 'product'
-) AND meta_key = '_product_clicks';
+UPDATE wp_postmeta pm
+JOIN wp_posts p ON pm.post_id = p.ID
+SET pm.meta_value = pm.meta_value + @increment_value
+WHERE p.post_title = @product_title AND p.post_type = 'product' AND pm.meta_key = '_product_clicks';
 
----------------------------------------------------------------------------
+
 کوئری نمایش میزان کلیک محصول در دیتابیس
+
 SET @product_title = 'فرش 1200 شانه باغ بهشت نقره ای طرح دردانه';
 
-SELECT meta_value
-FROM wp_postmeta
-WHERE post_id = (
-    SELECT ID
-    FROM wp_posts
-    WHERE post_title = @product_title AND post_type = 'product'
-) AND meta_key = '_product_clicks';
+SELECT pm.post_id, pm.meta_value
+FROM wp_postmeta pm
+JOIN wp_posts p ON pm.post_id = p.ID
+WHERE p.post_title = @product_title AND p.post_type = 'product' AND pm.meta_key = '_product_clicks';

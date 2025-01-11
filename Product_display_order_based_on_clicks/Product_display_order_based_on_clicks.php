@@ -1,7 +1,3 @@
-<?php
-/**
- * * مقدار کلیک یا همون کلیک پروداکت اگر در دیتابیس نباشد یا 0 باشد میاد مقدار رو پیشفرض میزاره روی 1 و همچنین یک گزینه هم به مرتب سازی وردپرس اضافه میکند به اسم بر اساس کلیک که کار کاربر راحت تر باشه، به صورت دیفالت و پیشفرض اگر میخواید روی این گزینه باشه باید از بخش سفارشی سازی ووکامرس این مورد رو بزاری روی بر اساس کلیک و سیو کنید
- */
 //////////////////////////////////// فیلتر نمایش محصولات بر اساس کلیک
 // اضافه کردن مقدار اولیه کلیک به محصولات جدید
 add_action('woocommerce_process_product_meta', 'add_initial_click_count');
@@ -34,55 +30,38 @@ function click_sorting_args($args) {
     return $args;
 }
 // افزودن گزینه "مرتب‌سازی بر اساس کلیک"
+// افزودن گزینه "مرتب‌سازی بر اساس کلیک" به لیست مرتب‌سازی
 add_filter('woocommerce_default_catalog_orderby_options', 'add_sort_by_clicks_option');
 add_filter('woocommerce_catalog_orderby', 'add_sort_by_clicks_option');
 
 function add_sort_by_clicks_option($options) {
-    $options['click_count'] = 'مرتب‌سازی بر اساس کلیک';
+    $options['click_count'] = 'مرتب‌سازی بر اساس کلیک'; // اضافه کردن گزینه
     return $options;
 }
-// تغییر کوئری محصولات برای مرتب‌سازی بر اساس تعداد کلیک
-add_filter('woocommerce_get_catalog_ordering_args', 'set_click_sorting_args');
-function set_click_sorting_args($args) {
-    if (isset($_GET['orderby']) && 'click_count' === $_GET['orderby']) {
-        $args['orderby'] = 'meta_value_num'; // مرتب‌سازی بر اساس مقدار عددی متا
-        $args['order'] = 'DESC'; // ترتیب نزولی
-        $args['meta_key'] = '_product_clicks'; // کلید متای تعداد کلیک
-    }
-    return $args;
-}
-//////////////////////
-add_action('woocommerce_product_query', 'apply_click_sorting_if_selected');
-function apply_click_sorting_if_selected($query) {
-    // بررسی فیلتر مرتب‌سازی از سمت کاربر
-    $orderby = isset($_GET['orderby']) ? $_GET['orderby'] : '';
 
-    // بررسی تنظیم مرتب‌سازی پیش‌فرض از تنظیمات قالب
-    $default_orderby = get_option('woocommerce_default_catalog_orderby', 'menu_order');
+// تنظیم پیش‌فرض مرتب‌سازی روی کلیک
+add_filter('pre_option_woocommerce_default_catalog_orderby', function ($default_orderby) {
+    return 'click_count'; // تنظیم پیش‌فرض روی مرتب‌سازی بر اساس کلیک
+});
 
-    // اگر کاربر یا تنظیمات قالب "مرتب‌سازی بر اساس کلیک" را انتخاب کرده باشد
-    if ($orderby === 'click_count' || $default_orderby === 'click_count') {
-        // تنظیم متای کوئری برای نمایش همه محصولات
+// اعمال مرتب‌سازی بر اساس کلیک
+add_action('woocommerce_product_query', 'apply_click_sorting');
+function apply_click_sorting($query) {
+    // بررسی اگر کاربر "مرتب‌سازی بر اساس کلیک" را انتخاب کرده باشد یا پیش‌فرض است
+    $orderby = isset($_GET['orderby']) ? $_GET['orderby'] : get_option('woocommerce_default_catalog_orderby');
+
+    if ($orderby === 'click_count') {
+        // اضافه کردن متای کلیک برای محصولات
         $query->set('meta_query', [
-            'relation' => 'OR',
-			[
-                'key' => '_product_clicks',
-                'value' => '0',
-                'compare' => '='
-            ],
             [
                 'key' => '_product_clicks',
                 'compare' => 'EXISTS',
             ],
         ]);
 
-        // مرتب‌سازی: ابتدا براساس کلیک و سپس تاریخ
-        $query->set('orderby', [
-            'meta_value_num' => 'DESC', // مرتب‌سازی نزولی بر اساس مقدار کلیک
-            'date' => 'DESC', // مرتب‌سازی نزولی بر اساس تاریخ اضافه شدن
-        ]);
-
-        // مشخص کردن کلید متا برای مرتب‌سازی
-        $query->set('meta_key', '_product_clicks');
+        // تنظیم مرتب‌سازی بر اساس کلیک
+        $query->set('orderby', 'meta_value_num'); // مرتب‌سازی بر اساس مقدار عددی متا
+        $query->set('meta_key', '_product_clicks'); // کلید متای تعداد کلیک
+        $query->set('order', 'DESC'); // ترتیب نزولی
     }
 }

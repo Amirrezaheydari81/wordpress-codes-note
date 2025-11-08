@@ -1,6 +1,6 @@
 <?php
 // functions.php
-functions.php
+// functions.php
 
 // ctm
 
@@ -53,7 +53,6 @@ function get_custom_favicon_url($type = 'png') {
 
 // header.php
 // between <head> </head> tag
-
 <?php
 $favicon_png = get_custom_favicon_url('png');
 $favicon_ico = get_custom_favicon_url('ico');

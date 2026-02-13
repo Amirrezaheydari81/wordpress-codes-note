@@ -68,11 +68,14 @@
   font-size: 14px;
   line-height: 1.8;
   color: #555;
-  padding-left: 4px;
 }
 .faq-item.active .faq-answer {
-  max-height: 300px;
-  margin-bottom: 16px;
+  max-height: fit-content;
+  background: #f5f7f8;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 12px;
+  border: 1px solid #bbbcbd;
 }
 .faq-item.active .faq-icon {
   transform: rotate(45deg);

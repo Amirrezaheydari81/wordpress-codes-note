@@ -1,0 +1,115 @@
+/*FAQ */
+.faq-page {
+  max-width: 720px;
+  margin: 48px auto;
+  padding: 0 16px;
+  font-family: inherit;
+}
+.faq-title {
+  text-align: center;
+  font-weight: 700;
+}
+.faq-form {
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 32px;
+}
+.faq-form input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+}
+.faq-form input:focus {
+  outline: none;
+  border-color: #000;
+}
+.faq-form button {
+  margin-top: 12px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #000;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+}
+.faq-form button:hover {
+  background: #f4ce14;
+}
+.faq-question {
+  all: unset;
+  width: 100%;
+  padding: 16px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.6;
+  background: #f5f7f8;
+  padding-right: 20px;
+  border-radius: 12px;
+  border: 1px solid #bbbcbd;
+}
+.faq-icon {
+  font-size: 20px;
+  transition: transform 0.2s ease;
+}
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #555;
+  padding-left: 4px;
+}
+.faq-item.active .faq-answer {
+  max-height: 300px;
+  margin-bottom: 16px;
+}
+.faq-item.active .faq-icon {
+  transform: rotate(45deg);
+}
+.faq-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.faq-stat {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  border: 1px solid;
+  backdrop-filter: blur(2px);
+}
+.faq-stat--approved {
+  color: #0f5132;
+  background: #19875414;
+  border-color: #198754;
+}
+.faq-stat--pending {
+  color: #664d03;
+  background: #ffc1071f;
+  border-color: #ffc107;
+}
+@media (min-width: 768px) {
+  .faq-question {
+    font-size: 16px;
+  }
+  .faq-answer {
+    font-size: 15px;
+  }
+  .faq-stat {
+    font-size: 13px;
+  }
+}

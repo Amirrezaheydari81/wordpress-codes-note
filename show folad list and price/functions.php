@@ -93,19 +93,23 @@ function load_steel_products_optimized()
         wp_die();
     }
 
-    $cat_id = (int) $_POST['category'];
-    $page   = isset($_POST['page']) ? (int) $_POST['page'] : 1;
+    $cat_id   = (int) $_POST['category'];
+    $load_all = !empty($_POST['load_all']);
+
+    // ✅ گرفتن همه زیر‌دسته‌ها
+    $term_ids = get_term_children($cat_id, 'product_cat');
+    $term_ids[] = $cat_id;
 
     $args = [
         'post_type'      => 'product',
         'post_status'    => 'publish',
-        'posts_per_page' => 7,
-        'paged'          => $page,
+        'posts_per_page' => $load_all ? -1 : 7,
         'tax_query'      => [
             [
                 'taxonomy' => 'product_cat',
                 'field'    => 'term_id',
-                'terms'    => $cat_id,
+                'terms'    => $term_ids,
+                'operator' => 'IN',
             ],
         ],
     ];
@@ -123,7 +127,7 @@ function load_steel_products_optimized()
         if (!$product) continue;
 
         $price = (float) $product->get_price();
-        $price_html = $price > 0 ? wc_price($price) : 'تماس بگیرید';
+        $price_html  = $price > 0 ? wc_price($price) : 'تماس بگیرید';
         $price_class = $price > 0 ? '' : 'call';
 
         echo '<tr>
@@ -137,12 +141,13 @@ function load_steel_products_optimized()
 
     wp_reset_postdata();
 
-    if ($query->max_num_pages > $page) {
+    // ✅ دکمه فقط وقتی لود اولیه است
+    if (!$load_all && $query->found_posts > 7) {
         echo '
         <tr class="load-more-row">
             <td colspan="5" style="text-align:center">
-                <button class="steel-load-more" data-page="' . ($page + 1) . '">
-                    مشاهده محصولات بیشتر
+                <button class="steel-load-more">
+                    مشاهده تمام محصولات
                 </button>
             </td>
         </tr>';

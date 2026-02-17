@@ -1,5 +1,5 @@
-// Add end line  in footer.php file
-jQuery(document).ready(function ($) {
+<script>
+    jQuery(document).ready(function ($) {
 
     // ✅ فقط اگر شورت‌کد روی صفحه است
     if (typeof window.steelShortcodeLoaded === 'undefined') {
@@ -8,52 +8,52 @@ jQuery(document).ready(function ($) {
 
     if (typeof ajaxurl === 'undefined' || typeof firstCategory === 'undefined') {
         console.warn('Steel variables missing');
-        return;
+    return;
     }
 
     let currentCat = firstCategory;
 
+    // ✅ لود اولیه (۷ محصول)
     if (currentCat > 0) {
-        loadProducts(currentCat, 1, false);
+        loadProducts(currentCat, false);
     } else {
         $('#steel-body').html(
             '<tr><td colspan="5">لطفاً یک دسته‌بندی را انتخاب کنید.</td></tr>'
         );
     }
 
+    // ✅ کلیک روی دسته‌بندی
     $('.steel-cat').on('click', function (e) {
         e.preventDefault();
 
-        currentCat = $(this).data('cat');
+    currentCat = $(this).data('cat');
 
-        $('.steel-cat').removeClass('active');
-        $(this).addClass('active');
+    $('.steel-cat').removeClass('active');
+    $(this).addClass('active');
 
-        $('#steel-body').html(
-            '<tr><td colspan="5">⏳ در حال بارگذاری...</td></tr>'
-        );
+    $('#steel-body').html(
+    '<tr><td colspan="5">⏳ در حال بارگذاری...</td></tr>'
+    );
 
-        loadProducts(currentCat, 1, false);
+    loadProducts(currentCat, false);
     });
 
+    // ✅ کلیک روی مشاهده تمام محصولات
     $(document).on('click', '.steel-load-more', function () {
-        let nextPage = $(this).data('page');
-        $(this).text('⏳ ...');
-        loadProducts(currentCat, nextPage, true);
+        $(this).text('⏳ در حال بارگذاری...');
+    loadProducts(currentCat, true);
     });
 
-    function loadProducts(catID, page, append) {
+    // ✅ Ajax Loader
+    function loadProducts(catID, loadAll) {
         $.post(ajaxurl, {
             action: 'load_steel_products',
             category: catID,
-            page: page
+            load_all: loadAll ? 1 : 0
         }, function (res) {
-            if (append) {
-                $('.load-more-row').remove();
-                $('#steel-body').append(res);
-            } else {
-                $('#steel-body').html(res);
-            }
+            $('#steel-body').html(res);
         });
     }
+
 });
+</script>

@@ -1,24 +1,58 @@
 .auto-product-inline {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 22px;
-  padding: 20px 24px;
-  margin: 40px 0;
+  padding: 22px 26px;
+  margin: 45px 0;
 
-  /* بک‌گراند گرادینت نارنجی → مشکی */
-  background: linear-gradient(135deg, #fe9901 0%, #d67f00 45%, #111111 100%);
+  /* گرادینت پریمیوم */
+  background: linear-gradient(135deg, #fe9901 0%, #c97900 40%, #0b0b0b 100%);
 
-  border-radius: 14px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+
+  overflow: hidden;
+  transition: all 0.45s ease;
+}
+
+/* خط نور لوکس */
+.auto-product-inline::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(254, 153, 1, 0.45),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+/* Hover کارت */
+.auto-product-inline:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 28px 55px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(254, 153, 1, 0.35);
+}
+
+.auto-product-inline:hover::before {
+  opacity: 1;
 }
 
 /* تصویر */
 .auto-product-inline .api-image img {
-  width: 90px;
-  height: auto;
-  border-radius: 12px; /* طبق درخواست */
+  width: 92px;
+  border-radius: 12px;
   background: #ffffff;
   padding: 4px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
 }
 
 /* محتوا */
@@ -28,8 +62,9 @@
 
 .auto-product-inline .api-title {
   margin: 0 0 8px;
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 15.5px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
 }
 
 .auto-product-inline .api-title a {
@@ -38,32 +73,33 @@
 }
 
 .auto-product-inline .api-title a:hover {
-  color: #fff3e0;
+  color: #fff1dc;
 }
 
 /* قیمت */
 .auto-product-inline .api-price {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 14.5px;
+  font-weight: 700;
   color: #ffffff;
   opacity: 0.95;
 }
 
-/* دکمه */
+/* دکمه پریمیوم */
 .auto-product-inline .api-action .api-btn {
-  background-color: #ffffff;
-  color: #fe9901;
-  padding: 11px 22px;
-  border-radius: 10px;
+  background: linear-gradient(135deg, #ffffff 0%, #fff1dc 100%);
+  color: #c97900;
+  padding: 12px 26px;
+  border-radius: 12px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   border: none;
-  transition: all 0.25s ease;
+  transition: all 0.35s ease;
 }
 
 .auto-product-inline .api-action .api-btn:hover {
-  background-color: #fff3e0;
-  color: #c77400;
+  transform: scale(1.05);
+  background: #ffffff;
+  color: #fe9901;
 }
 
 /* موبایل */
@@ -73,10 +109,7 @@
     text-align: center;
   }
 
-  .auto-product-inline .api-action {
-    width: 100%;
-  }
-
+  .auto-product-inline .api-action,
   .auto-product-inline .api-action .api-btn {
     width: 100%;
   }

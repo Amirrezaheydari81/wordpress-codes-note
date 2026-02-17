@@ -1,0 +1,83 @@
+.auto-product-inline {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 20px 24px;
+  margin: 40px 0;
+
+  /* بک‌گراند گرادینت نارنجی → مشکی */
+  background: linear-gradient(135deg, #fe9901 0%, #d67f00 45%, #111111 100%);
+
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* تصویر */
+.auto-product-inline .api-image img {
+  width: 90px;
+  height: auto;
+  border-radius: 12px; /* طبق درخواست */
+  background: #ffffff;
+  padding: 4px;
+}
+
+/* محتوا */
+.auto-product-inline .api-content {
+  flex: 1;
+}
+
+.auto-product-inline .api-title {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.auto-product-inline .api-title a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.auto-product-inline .api-title a:hover {
+  color: #fff3e0;
+}
+
+/* قیمت */
+.auto-product-inline .api-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  opacity: 0.95;
+}
+
+/* دکمه */
+.auto-product-inline .api-action .api-btn {
+  background-color: #ffffff;
+  color: #fe9901;
+  padding: 11px 22px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  transition: all 0.25s ease;
+}
+
+.auto-product-inline .api-action .api-btn:hover {
+  background-color: #fff3e0;
+  color: #c77400;
+}
+
+/* موبایل */
+@media (max-width: 600px) {
+  .auto-product-inline {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .auto-product-inline .api-action {
+    width: 100%;
+  }
+
+  .auto-product-inline .api-action .api-btn {
+    width: 100%;
+  }
+}

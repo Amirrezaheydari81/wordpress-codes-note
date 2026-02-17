@@ -1,64 +1,102 @@
 <?php
-function auto_product_from_post_title_shortcode()
-{
 
-    if (! is_singular('post')) return '';
+add_shortcode('auto_product', function () {
 
-    global $post;
-    $title = $post->post_title;
-    $keyword = '';
+    if (!is_singular('post')) return '';
 
-    // استخراج فولاد عددی مثل 1.2080
-    if (preg_match('/\b\d\.\d{4}\b/', $title, $m)) {
-        $keyword = $m[0];
-    } elseif (preg_match('/\bSPK\b/i', $title, $m)) {
-        $keyword = $m[0];
-    }
+    $title = get_the_title();
 
-    if (empty($keyword)) return '';
+    /* ========= 1) استخراج کدها ========= */
+    preg_match_all('/\b\d\.\d{4}\b/u', $title, $m);
+    $codes = array_unique($m[0]);
 
-    $products = get_posts([
+    $has_spk = (bool) preg_match('/\bspk\b/i', $title);
+
+    if (empty($codes) && !$has_spk) return '';
+
+    /* ========= 2) گرفتن محصولات کاندید (همه فولاد سردکار) ========= */
+    $q = new WP_Query([
         'post_type'      => 'product',
-        'posts_per_page' => 1,
-        's'              => $keyword,
+        'post_status'    => 'publish',
+        'posts_per_page' => -1, // خیلی مهم
+        'fields'         => 'ids',
+        'no_found_rows'  => true,
     ]);
 
-    if (empty($products)) return '';
+    if (!$q->have_posts()) return '';
 
-    $product = wc_get_product($products[0]->ID);
-    if (! $product) return '';
+    $best_id = 0;
+    $best_score = 0;
 
-    ob_start();
-?>
-    <div class="auto-product-inline">
-        <div class="api-image">
-            <a href="<?php echo get_permalink($product->get_id()); ?>">
-                <?php echo $product->get_image('thumbnail'); ?>
-            </a>
-        </div>
+    foreach ($q->posts as $pid) {
 
-        <div class="api-content">
-            <h4 class="api-title">
-                <a href="<?php echo get_permalink($product->get_id()); ?>">
-                    <?php echo esc_html($product->get_name()); ?>
-                </a>
-            </h4>
+        $p_title = mb_strtolower(get_the_title($pid), 'UTF-8');
+        $p_slug  = mb_strtolower(get_post_field('post_name', $pid), 'UTF-8');
 
-            <div class="api-price">
-                <?php echo $product->get_price_html(); ?>
+        $hay = $p_title . ' ' . $p_slug;
+
+        // نرمال‌سازی: 1.2080 == 1-2080 == 12080
+        $hay_norm = str_replace(['-', '.', ' '], '', $hay);
+
+        $score = 0;
+
+        foreach ($codes as $code) {
+            $code_l = mb_strtolower($code, 'UTF-8');
+            $code_norm = str_replace(['.', '-'], '', $code_l);
+
+            // تطابق دقیق
+            if (strpos($hay, $code_l) !== false) {
+                $score += 1000;
+            }
+
+            // تطابق نرمال‌شده
+            if (strpos($hay_norm, $code_norm) !== false) {
+                $score += 800;
+            }
+        }
+
+        // امتیاز SPK
+        if ($has_spk && strpos($hay, 'spk') !== false) {
+            $score += 400;
+        }
+
+        if ($score > $best_score) {
+            $best_score = $score;
+            $best_id = $pid;
+        }
+    }
+
+    // اگر حتی امتیاز نداشت → خروجی نده (عمداً)
+    if (!$best_id || $best_score < 800) return '';
+
+    /* ========= 3) خروجی ========= */
+    $product = wc_get_product($best_id);
+    if (!$product) return '';
+
+    ob_start(); ?>
+    <a
+        href="<?php echo esc_url(get_permalink($best_id)); ?>"
+        class="auto-product-link"
+        target="_blank"
+        aria-label="مشاهده محصول <?php echo esc_attr($product->get_name()); ?>">
+        <div class="auto-product-inline">
+
+            <div class="api-image">
+                <?php echo $product->get_image('woocommerce_thumbnail'); ?>
             </div>
-        </div>
 
-        <div class="api-action">
-            <a href="<?php echo esc_url($product->add_to_cart_url()); ?>"
-                class="button api-btn">
-                خرید کنید
-            </a>
+            <div class="api-content">
+                <p class="api-title"><?php echo esc_html($product->get_name()); ?></p>
+                <div class="api-price"><?php echo wp_kses_post($product->get_price_html()); ?></div>
+            </div>
+
+            <div class="api-action">
+                <span class="api-btn">مشاهده محصول</span>
+            </div>
+
         </div>
-    </div>
+    </a>
+
 <?php
     return ob_get_clean();
-}
-
-add_shortcode('auto_product', 'auto_product_from_post_title_shortcode');
-// Short code  == [auto_product]
+});

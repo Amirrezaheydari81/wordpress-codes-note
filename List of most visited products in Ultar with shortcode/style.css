@@ -1,0 +1,26 @@
+.wd-footer-vertical-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.wd-footer-vertical-menu li {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.wd-footer-vertical-menu li:last-child {
+  border-bottom: none;
+}
+
+.wd-footer-vertical-menu a {
+  display: block;
+  padding: 10px 0;
+  font-size: 13px;
+  color: #bfbfbf;
+  transition: all 0.3s ease;
+}
+
+.wd-footer-vertical-menu a:hover {
+  color: #fff;
+  padding-right: 6px;
+}
